@@ -1,0 +1,37 @@
+version: "3"
+services:
+  redis:
+    image: redis
+    container_name: redis-cart-comm
+    ports:
+      - "6379:6379"
+  # db:
+  #   image: postgres
+  #   container_name: db
+  #   restart: always
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_USER: ${DB_USER}
+  #     POSTGRES_PASSWORD: ${DB_PASS}
+  #     POSTGRES_DB: ${DB_NAME}
+  api:
+    image: node:alpine
+    container_name: api
+    # restart: always
+    # env_file: 
+    #   - .env
+    depends_on: 
+      # - db
+      - redis-cart-comm
+    ports: 
+      - 3030:3030
+    volumes: 
+      - .:/usr/src/app
+    working_dir: /usr/src/app
+    entrypoint: ["/bin/sh", "./bin/start.sh"]
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "10m"
+        max-file: "5"
